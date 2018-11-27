@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Audio XML tag</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery.min.js"></script>
+    <script src="jquery-ui.min.js"></script>
+    <style>
+    .btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+    </style>
+  </head>
+  <body>
+<div class="container" style='margin-top: 5px;'>
+
+    <div id="media" class="form-group row ml-5">
+        <div ><input type=text id="mediaID" class="form-control" placeholder="Enter media asset ID"/></div>
+    <div style='margin-left: 10px;'><select id="mediaIDext" class="form-control">
+          <option value="mxf" selected>mxf</option>
+          <option value="mov">mov</option>
+        </select></div>
+    </div>
+
+    <div id="main" class="form-group row m-3 ml-5">
+        <input type="button" id="btAdd" value="Add Audio" class="bt btn btn-primary mb-2" />
+        <input type="button" id="btRemove" value="Remove Audio" class="bt btn btn-primary mb-2" style='margin-left: 3px;'/>
+        <input type="button" id="btRemoveAll" value="Remove All" class="bt btn btn-primary mb-2" style='margin-left: 3px;'/><br />
+    </div>
+
+
+    <div id="save" class="form-group row mt-2 ml-5">
+    <button class="btn btn-primary mb-2" onclick="saveAs()">Save to XML</button>
+    </div>
+</div>
+
+    <script>
+
+
+      const { dialog } = require('electron').remote
+ var builder = require('xmlbuilder');
+
+$(document).ready(function() {
+
+var iCnt = 0;
+var first = -1;
+var second = 0;
+// CREATE A "DIV" ELEMENT AND DESIGN IT USING jQuery ".css()" CLASS.
+var container = document.createElement('div');
+ 
+$('#btAdd').click(function() {
+    if (iCnt <= 8) {
+
+        iCnt = iCnt + 1;
+        first = first + 2;
+        second = second + 2;
+
+        // ADD TEXTBOX.
+    //    $(container).append('<input type=text class="input" id=tb' + iCnt + ' ' +
+    //        'value="Text Element ' + iCnt + '" />');
+
+        $(container).append(
+        '<div id=tb' + iCnt + ' ' + 'class="form-group row m-1 ml-5"'+ '>'+
+        '<div style="margin-right: 5px;"><text>Audio ' + (first) + ' / ' + (second) + ' ' + '</text></div>'+
+        '<div><select class="input form-control form-control-sm">' +
+        '<option value="" selected disabled hidden></option>' +
+        '<option value="ori">ori</option>' +
+        '<option value="mix">mix</option>' +
+        '<option value="lav">lav</option>' +
+        '<option value="rus">rus</option>' +
+        '<option value="dolbyE">dolbyE</option>' +
+        '<option value="rusDE">rusDE</option>' +
+        '<option value="hun">hun</option>' +
+        '<option value="swe">swe</option>' +
+        '<option value="sad">sad</option>' +
+        '<option value="est">est</option>' +
+        '<option value="lit">lit</option>' +
+        '<option value="bul">bul</option>' +
+        '<option value="cze">cze</option>' +
+        '<option value="pol">pol</option>' +
+        '<option value="tur">tur</option>' +
+        '<option value="eng">eng</option>' +    
+        '</select></div>'+
+        '</div>');
+
+        // SHOW SUBMIT BUTTON IF ATLEAST "1" ELEMENT HAS BEEN CREATED.
+       /* if (iCnt == 1) {
+            var divSubmit = $(document.createElement('div'));
+            $(divSubmit).append('<input type=button class="bt"' + 
+                'onclick="GetTextValue()"' + 
+                    'id=btSubmit value=Submit />');
+        }*/
+
+        // ADD BOTH THE DIV ELEMENTS TO THE "main" CONTAINER.
+        $('#main').after(container); //divSubmit);
+    }
+    // AFTER REACHING THE SPECIFIED LIMIT, DISABLE THE "ADD" BUTTON.
+    // (20 IS THE LIMIT WE HAVE SET)
+    else {      
+        $(container).append('<label id=label class=ml-5>Reached the limit !!!</label>'); 
+        $('#btAdd').attr('class', 'bt-disable btn btn-primary mb-2'); 
+        $('#btAdd').attr('disabled', 'disabled');
+    }
+});
+
+// REMOVE ONE ELEMENT PER CLICK.
+$('#btRemove').click(function() {
+    
+    if (iCnt != 0) { $('#tb' + iCnt).remove(); iCnt = iCnt - 1; first = first -2; second = second -2
+    $('#label')
+            .remove(); 
+    $('#btAdd')
+            .removeAttr('disabled') 
+            .attr('class', 'bt btn btn-primary mb-2');
+    }
+
+    if (iCnt == 0) { 
+        $(container)
+            .empty() 
+            .remove(); 
+
+    //    $('#btSubmit').remove(); 
+        $('#btAdd')
+            .removeAttr('disabled') 
+            .attr('class', 'bt btn btn-primary mb-2');
+    }
+});
+
+// REMOVE ALL THE ELEMENTS IN THE CONTAINER.
+$('#btRemoveAll').click(function() {
+    $(container)
+        .empty()
+        .remove(); 
+
+ //   $('#btSubmit').remove(); 
+    iCnt = 0; 
+    first = -1;
+    second = 0;
+    $('#btAdd')
+        .removeAttr('disabled') 
+        .attr('class', 'bt btn btn-primary mb-2');
+});
+});
+
+// PICK THE VALUES FROM EACH TEXTBOX WHEN "SUBMIT" BUTTON IS CLICKED.
+//DEBUG
+/*
+var divValue, values = '';
+
+function GetTextValue() {
+$(divValue) 
+    .empty() 
+    .remove(); 
+
+values = '';
+N = 1;
+$('.input').each(function() {
+    divValue = $(document.createElement('div')).css({
+        padding:'5px', width:'200px'
+    });
+    if (this.value == '')
+    {}
+  else if (this.value == ('dolbyE' || 'rusDE'))
+  {
+    values += this.value + '1 ' + (N = N+1) + '<br />' + this.value + '2 ' + (N = N+1) + '<br />'
+  }
+  else {
+    values += this.value + '.L ' + (N = N+1) + '<br />' + this.value + '.R ' + (N = N+1) + '<br />'
+  }
+});
+
+$(divValue).append('<p><b>Your selected values</b></p>' + values);
+$('body').append(divValue);
+}
+*/
+
+function saveAs() {
+N = 1;
+var builderList = builder.create('fcpFileExport', {version: '1.0', encoding: 'UTF-8'})
+.att('version', '1.0')
+.ele('file')
+    .ele('mediaId', $('#mediaID').val()).up()
+    .ele('fileName', $('#mediaID').val()+'.'+$('#mediaIDext').val()).up()
+.up()
+.ele('filetracks')
+.ele('trackDefinition')
+.ele('trackTag', 'Video').up()
+.ele('position', '1').up()
+.up();
+
+    $('.input').each(function() {
+   if (this.value == '')
+   {}
+ else if (this.value == ('dolbyE') || this.value == ('rusDE'))
+ {
+    builderList.ele('trackDefinition')
+    .ele('trackTag', this.value + '1').up()
+    .ele('position', N = N+1).up()
+    .up()
+    .ele('trackDefinition')
+    .ele('trackTag', this.value + '2').up()
+    .ele('position', N = N+1).up()
+    .up()
+ }
+ else {
+    builderList.ele('trackDefinition')
+    .ele('trackTag', this.value + '.L').up()
+    .ele('position', N = N+1).up()
+    .up()
+    .ele('trackDefinition')
+    .ele('trackTag', this.value + '.R').up()
+    .ele('position', N = N+1).up()
+    .up()
+ }
+})
+builderList.up()
+
+var xml = builderList.end({pretty: true});
+var filename =  $('#mediaID').val();
+  var savePath = dialog.showSaveDialog({
+      defaultPath : filename,
+  filters: [{
+      name: 'XML',
+      extensions: ['xml']
+  }]
+  })
+
+var fs = require('fs');
+fs.writeFile(savePath, xml, 'utf8', function(err) {
+    if(err) {
+        return console.log(err);
+    }});
+ 
+}
+  
+
+</script>
+
+
+
+  </body>
+</html>
