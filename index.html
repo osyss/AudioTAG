@@ -36,11 +36,10 @@
     </div>
 </div>
 
-    <script>
-
-
-      const { dialog } = require('electron').remote
+<script>
+     const { remote, dialog, fs, path } = require("@electron/remote");
  var builder = require('xmlbuilder');
+// const dialog = remote.dialog;
 
 $(document).ready(function() {
 
@@ -80,12 +79,17 @@ $('#btAdd').click(function() {
         '<option value="bul">bul</option>' +
         '<option value="cze">cze</option>' +
         '<option value="pol">pol</option>' +
+        '<option value="polDE">polDE</option>' +
         '<option value="tur">tur</option>' +
         '<option value="eng">eng</option>' +
         '<option value="swe">swe</option>' +
         '<option value="dan">dan</option>' +
         '<option value="nor">nor</option>' +    
         '<option value="fin">fin</option>' + 
+        '<option value="nld">nld</option>' +
+        '<option value="nldDE">nldDE</option>' +
+        '<option value="deu">deu</option>' +
+        '<option value="deuDE">deuDE</option>' +
         '</select></div>'+
         '</div>');
 
@@ -221,22 +225,21 @@ var builderList = builder.create('fcpFileExport', {version: '1.0', encoding: 'UT
 })
 builderList.up()
 
+var fs = require('fs');
 var xml = builderList.end({pretty: true});
 var filename =  $('#mediaID').val();
-  var savePath = dialog.showSaveDialog({
-      defaultPath : filename,
-  filters: [{
-      name: 'XML',
-      extensions: ['xml']
+dialog.showSaveDialog({
+    defaultPath: "%userprofile%//Desktop//"+filename,
+    filters: [{
+            name: 'XML',
+            extensions: ['xml']
   }]
-  })
-
-var fs = require('fs');
-fs.writeFile(savePath, xml, 'utf8', function(err) {
+  }).then(({ filePath }) => {
+fs.writeFile(filePath, xml, 'utf8', function(err) {
     if(err) {
         return console.log(err);
     }});
- 
+});
 }
   
 
