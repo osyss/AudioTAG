@@ -90,6 +90,7 @@ $('#btAdd').click(function() {
         '<option value="nldDE">nldDE</option>' +
         '<option value="deu">deu</option>' +
         '<option value="deuDE">deuDE</option>' +
+        '<option value="ukr">ukr</option>' +
         '</select></div>'+
         '</div>');
 
@@ -201,7 +202,8 @@ var builderList = builder.create('fcpFileExport', {version: '1.0', encoding: 'UT
     $('.input').each(function() {
    if (this.value == '')
    {}
- else if (this.value == ('dolbyE') || this.value == ('rusDE'))
+// else if (this.value == ('dolbyE') || this.value == ('rusDE'))
+ else if (this.value == ('dolbyE') || this.value == ('rusDE') || this.value == ('polDE') || this.value == ('nldDE') || this.value == ('deuDE'))
  {
     builderList.ele('trackDefinition')
     .ele('trackTag', this.value + '1').up()
