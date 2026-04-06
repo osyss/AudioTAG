@@ -9,7 +9,6 @@
   "author": "Oscar",
   "license": "ISC",
   "dependencies": {
-    "//electron": ">=7.2.4",
     "electron": "latest",
     "xmlbuilder": "^10.1.0"
   }
